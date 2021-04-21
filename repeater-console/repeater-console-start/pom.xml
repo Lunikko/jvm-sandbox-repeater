@@ -9,9 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <velocity-starter.version>1.0-SNAPSHOT</velocity-starter.version>
+    </properties>
+
     <artifactId>repeater-console-start</artifactId>
     <dependencies>
-
         <dependency>
             <groupId>com.alibaba.jvm.sandbox</groupId>
             <artifactId>repeater-console-service</artifactId>
@@ -22,17 +25,27 @@
             <artifactId>repeater-client</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+        </dependency>
         <!-- spring boot dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>1.4.7.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yingzi.tec</groupId>
+            <artifactId>velocity-spring-boot-starter</artifactId>
+            <version>${velocity-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>1.4.7.RELEASE</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -46,17 +59,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-velocity</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
         </dependency>
     </dependencies>
 

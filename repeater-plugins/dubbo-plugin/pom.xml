@@ -11,17 +11,21 @@
 
     <artifactId>dubbo-plugin</artifactId>
 
+    <properties>
+        <dubbo.version>2.7.10</dubbo.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-rpc-api</artifactId>
-            <version>2.7.3</version>
+            <version>${dubbo.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-config-api</artifactId>
-            <version>2.7.3</version>
+            <version>${dubbo.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -9,13 +9,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <netty-socketio.version>1.7.18</netty-socketio.version>
+    </properties>
+
     <artifactId>socketio-plugin</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
             <artifactId>netty-socketio</artifactId>
-            <version>1.7.18</version>
+            <version>${netty-socketio.version}</version>
         </dependency>
     </dependencies>
 

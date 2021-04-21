@@ -27,6 +27,8 @@ import java.util.Optional;
 @MetaInfServices(Repeater.class)
 public class DubboRepeater extends AbstractRepeater {
 
+    private static final ConfigManager CONFIG_MANAGER = new ConfigManager();
+
     @Override
     protected Object executeRepeat(RepeatContext context) throws Exception {
         Invocation invocation = context.getRecordModel().getEntranceInvocation();
@@ -53,7 +55,7 @@ public class DubboRepeater extends AbstractRepeater {
         } else {
             registryConfig.setGroup(dubboInvocation.getGroup());
         }
-        reference.setApplication(ConfigManager.getInstance().getApplication().orElse(applicationConfig));
+        reference.setApplication(CONFIG_MANAGER.getApplication().orElse(applicationConfig));
         reference.setRegistry(registryConfig);
 
         // set protocol / interface / version / timeout
