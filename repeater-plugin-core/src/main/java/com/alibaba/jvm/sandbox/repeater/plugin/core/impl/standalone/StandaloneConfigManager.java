@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 /**
  * {@link StandaloneConfigManager} 本地的配置管理
@@ -17,6 +18,7 @@ import java.io.File;
  *
  * @author zhaoyb1990
  */
+
 public class StandaloneConfigManager implements ConfigManager {
 
     private final static Logger log = LoggerFactory.getLogger(StandaloneConfigManager.class);
@@ -25,7 +27,7 @@ public class StandaloneConfigManager implements ConfigManager {
     public RepeaterResult<RepeaterConfig> pullConfig() {
         String localConfigPath = PathUtils.getConfigPath() + "/repeater-config.json";
         try {
-            String config = FileUtils.readFileToString(new File(localConfigPath), "UTF-8");
+            String config = FileUtils.readFileToString(new File(localConfigPath), StandardCharsets.UTF_8);
             RepeaterConfig rc = JSON.parseObject(config, RepeaterConfig.class);
             return RepeaterResult.builder().success(true).data(rc).message("operate success").build();
         } catch (Exception e) {

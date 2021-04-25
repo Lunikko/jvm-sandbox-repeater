@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class HttpStandaloneListener extends DefaultEventListener implements InvokeAdvice {
 
-    private final ThreadLocal<WrapperTransModel> wtmRef = new ThreadLocal<WrapperTransModel>();
+    private final ThreadLocal<WrapperTransModel> wtmRef = new ThreadLocal<>();
 
     HttpStandaloneListener(InvokeType invokeType,
                            boolean entrance,

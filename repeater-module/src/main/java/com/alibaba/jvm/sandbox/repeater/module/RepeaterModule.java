@@ -47,9 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_SPRING_ADVICE_SWITCH;
@@ -88,9 +86,9 @@ public class RepeaterModule implements Module, ModuleLifecycle {
 
     private LifecycleManager lifecycleManager;
 
-    private List<InvokePlugin> invokePlugins;
-
     private HeartbeatHandler heartbeatHandler;
+
+    private List<InvokePlugin> invokedPlugins = new ArrayList<>();
 
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -99,14 +97,15 @@ public class RepeaterModule implements Module, ModuleLifecycle {
         // 初始化日志框架
         LogbackUtils.init(PathUtils.getConfigPath() + "/repeater-logback.xml");
         Mode mode = configInfo.getMode();
-        log.info("module on loaded,id={},version={},mode={}", com.alibaba.jvm.sandbox.repeater.module.Constants.MODULE_ID, com.alibaba.jvm.sandbox.repeater.module.Constants.VERSION, mode);
+        log.info("module is loading, id={},version={}, mode={}", com.alibaba.jvm.sandbox.repeater.module.Constants.MODULE_ID, com.alibaba.jvm.sandbox.repeater.module.Constants.VERSION, mode);
         /* agent方式启动 */
-        if (mode == Mode.AGENT && Boolean.valueOf(PropertyUtil.getPropertyOrDefault(REPEAT_SPRING_ADVICE_SWITCH, ""))) {
-            log.info("agent launch mode,use Spring Instantiate Advice to register bean.");
+        if (mode == Mode.AGENT && Boolean.parseBoolean(PropertyUtil.getPropertyOrDefault(REPEAT_SPRING_ADVICE_SWITCH, ""))) {
+            log.info("agent launch mode, use Spring Instantiate Advice to register bean.");
             SpringContextInnerContainer.setAgentLaunch(true);
             SpringInstantiateAdvice.watcher(this.eventWatcher).watch();
             moduleController.active();
         }
+        log.info("onload completed.");
     }
 
     @Override
@@ -115,36 +114,35 @@ public class RepeaterModule implements Module, ModuleLifecycle {
             lifecycleManager.release();
         }
         heartbeatHandler.stop();
+        log.info("unload completed.");
     }
 
     @Override
     public void onActive() throws Throwable {
-        log.info("onActive");
+        log.info("--- onActive ---");
     }
 
     @Override
     public void onFrozen() throws Throwable {
-        log.info("onFrozen");
+        log.info("--- onFrozen ---");
     }
 
     @Override
     public void loadCompleted() {
-        ExecutorInner.execute(new Runnable() {
-            @Override
-            public void run() {
-                configManager = StandaloneSwitch.instance().getConfigManager();
-                broadcaster = StandaloneSwitch.instance().getBroadcaster();
-                invocationListener = new DefaultInvocationListener(broadcaster);
-                RepeaterResult<RepeaterConfig> pr = configManager.pullConfig();
-                if (pr.isSuccess()) {
-                    log.info("pull repeater config success,config={}", pr.getData());
-                    ClassloaderBridge.init(loadedClassDataSource);
-                    initialize(pr.getData());
-                }
+        ExecutorInner.execute(() -> {
+            configManager = StandaloneSwitch.instance().getConfigManager();
+            broadcaster = StandaloneSwitch.instance().getBroadcaster();
+            invocationListener = new DefaultInvocationListener(broadcaster);
+            RepeaterResult<RepeaterConfig> pr = configManager.pullConfig();
+            if (pr.isSuccess()) {
+                log.info("pull repeater config success, config={}", pr.getData());
+                ClassloaderBridge.init(loadedClassDataSource);
+                initialize(pr.getData());
             }
         });
         heartbeatHandler = new HeartbeatHandler(configInfo, moduleManager);
         heartbeatHandler.start();
+        log.info("load completed.");
     }
 
     /**
@@ -165,24 +163,27 @@ public class RepeaterModule implements Module, ModuleLifecycle {
                     pluginsPath = config.getPluginsPath();
                 }
                 lifecycleManager = new JarFileLifeCycleManager(pluginsPath, routingArray);
+                invokedPlugins.clear();
                 // 装载插件
-                invokePlugins = lifecycleManager.loadInvokePlugins();
-                for (InvokePlugin invokePlugin : invokePlugins) {
+                for (InvokePlugin invokePlugin : lifecycleManager.loadInvokePlugins()) {
                     try {
                         if (invokePlugin.enable(config)) {
-                            log.info("enable plugin {} success", invokePlugin.identity());
                             invokePlugin.watch(eventWatcher, invocationListener);
                             invokePlugin.onConfigChange(config);
+                            invokedPlugins.add(invokePlugin);
+                            log.info("enable plugin {} success", invokePlugin.identity());
                         }
                     } catch (PluginLifeCycleException e) {
-                        log.info("watch plugin occurred error", e);
+                        log.error("watch plugin occurred error", e);
                     }
                 }
+                log.info("total {} plugins enabled.", invokedPlugins.size());
                 // 装载回放器
                 List<Repeater> repeaters = lifecycleManager.loadRepeaters();
                 for (Repeater repeater : repeaters) {
                     if (repeater.enable(config)) {
                         repeater.setBroadcast(broadcaster);
+                        log.info("enable repeater {} success", repeater.identity());
                     }
                 }
                 RepeaterBridge.instance().build(repeaters);
@@ -190,8 +191,10 @@ public class RepeaterModule implements Module, ModuleLifecycle {
                 List<SubscribeSupporter> subscribes = lifecycleManager.loadSubscribes();
                 for (SubscribeSupporter subscribe : subscribes) {
                     subscribe.register();
+                    log.info("enable subscribe {} success", subscribe.type());
                 }
                 TtlConcurrentAdvice.watcher(eventWatcher).watch(config);
+                log.info("initialize completed.");
             } catch (Throwable throwable) {
                 initialized.compareAndSet(true, false);
                 log.error("error occurred when initialize module", throwable);
@@ -210,7 +213,9 @@ public class RepeaterModule implements Module, ModuleLifecycle {
         try {
             String data = req.get(Constants.DATA_TRANSPORT_IDENTIFY);
             if (StringUtils.isEmpty(data)) {
-                writer.write("invalid request, cause parameter {" + Constants.DATA_TRANSPORT_IDENTIFY + "} is required");
+                String errMsg = "invalid request, cause parameter {" + Constants.DATA_TRANSPORT_IDENTIFY + "} is required";
+                log.error(errMsg);
+                writer.write(errMsg);
                 return;
             }
             RepeatEvent event = new RepeatEvent();
@@ -220,8 +225,10 @@ public class RepeaterModule implements Module, ModuleLifecycle {
             }
             event.setRequestParams(requestParams);
             EventBusInner.post(event);
-            writer.write("submit success");
+            writer.write("repeat submit success");
+            log.info("repeat submit success.");
         } catch (Throwable e) {
+            log.error("repeat error: {}", e.getMessage(), e);
             writer.write(e.getMessage());
         }
     }
@@ -239,8 +246,9 @@ public class RepeaterModule implements Module, ModuleLifecycle {
                 reload();
                 initialized.compareAndSet(false, true);
             }
-        } catch (Throwable throwable) {
-            writer.write(throwable.getMessage());
+        } catch (Throwable e) {
+            log.error("reload error: {}", e.getMessage(), e);
+            writer.write(e.getMessage());
             initialized.compareAndSet(false, true);
         }
     }
@@ -253,7 +261,7 @@ public class RepeaterModule implements Module, ModuleLifecycle {
             log.error("reload plugin failed, cause pull config not success");
             return;
         }
-        for (InvokePlugin invokePlugin : invokePlugins) {
+        for (InvokePlugin invokePlugin : invokedPlugins) {
             if (invokePlugin.enable(result.getData())) {
                 invokePlugin.unWatch(eventWatcher, invocationListener);
             }
@@ -263,6 +271,7 @@ public class RepeaterModule implements Module, ModuleLifecycle {
         // reWatch
         initialize(result.getData());
         moduleController.active();
+        log.info("reload completed.");
     }
 
     /**
@@ -282,6 +291,7 @@ public class RepeaterModule implements Module, ModuleLifecycle {
             RepeatMeta meta = SerializerProvider.instance().provide(Serializer.Type.JSON).deserialize(data, RepeatMeta.class);
             req.put(Constants.DATA_TRANSPORT_IDENTIFY, SerializerProvider.instance().provide(Serializer.Type.HESSIAN).serialize2String(meta));
             repeat(req, writer);
+            log.info("repeatWithJson completed.");
         } catch (Throwable e) {
             writer.write(e.getMessage());
         }
@@ -305,6 +315,7 @@ public class RepeaterModule implements Module, ModuleLifecycle {
             ApplicationModel.instance().setConfig(config);
             noticeConfigChange(config);
             writer.write("config push success");
+            log.info("pushConfig completed.");
         } catch (SerializeException e) {
             writer.write("invalid request, cause deserialize config failed, reason = {" + e.getMessage() + "}");
         }
@@ -317,13 +328,13 @@ public class RepeaterModule implements Module, ModuleLifecycle {
      */
     private void noticeConfigChange(final RepeaterConfig config) {
         if (initialized.get()) {
-            for (InvokePlugin invokePlugin : invokePlugins) {
+            for (InvokePlugin invokePlugin : invokedPlugins) {
                 try {
                     if (invokePlugin.enable(config)) {
                         invokePlugin.onConfigChange(config);
                     }
                 } catch (PluginLifeCycleException e) {
-                    log.error("error occurred when notice config, plugin ={}", invokePlugin.getType().name(), e);
+                    log.error("error occurred when notice config, plugin={}", invokePlugin.getType().name(), e);
                 }
             }
         }

@@ -20,8 +20,8 @@ public class SpringContextContainer {
     /**
      * spring bean用map存放
      */
-    private Map<String, Object> realBeanContext = new ConcurrentHashMap<String, Object>(16);
-    private Map<String, Object> classNameContext = new ConcurrentHashMap<String, Object>(16);
+    private Map<String, Object> realBeanContext = new ConcurrentHashMap<>(16);
+    private Map<String, Object> classNameContext = new ConcurrentHashMap<>(16);
 
     private ApplicationContext context;
 

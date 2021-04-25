@@ -63,6 +63,15 @@ public class Constants {
     };
 
     /**
+     * HTTP录制时拦截body的content-type类型
+     */
+    public static final String[] REPEAT_RECORD_HTTP_INTERCEPT_BODY_CONTENT_TYPES = new String[]{
+            "application/json",
+            "application/xml",
+            "text/xml"
+    };
+
+    /**
      * servlet-api路由（目前sandbox还不支持启动module路由，所以在插件层面进行路由，保证插件使用容器的servlet-api）
      */
     public static final String SERVLET_API_NAME = "javax.servlet.http.HttpServlet";

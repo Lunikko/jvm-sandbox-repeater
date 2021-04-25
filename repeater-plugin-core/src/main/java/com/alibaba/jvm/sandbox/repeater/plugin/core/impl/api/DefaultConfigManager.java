@@ -9,6 +9,7 @@ import com.alibaba.jvm.sandbox.repeater.plugin.core.util.HttpUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterResult;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link DefaultConfigManager} http数据拉取
@@ -16,9 +17,10 @@ import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterResult;
  *
  * @author zhaoyb1990
  */
+@Slf4j
 public class DefaultConfigManager implements ConfigManager {
 
-    private final static String DEFAULT_CONFIG_URL = PropertyUtil.getPropertyOrDefault(Constants.DEFAULT_CONFIG_DATASOURCE, "");
+    private static final String DEFAULT_CONFIG_URL = PropertyUtil.getPropertyOrDefault(Constants.DEFAULT_CONFIG_DATASOURCE, "");
 
     @Override
     public RepeaterResult<RepeaterConfig> pullConfig() {
@@ -32,8 +34,7 @@ public class DefaultConfigManager implements ConfigManager {
             }
             try {
                 Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                // ignore
+            } catch (InterruptedException ignore) {
                 break;
             }
         }
@@ -41,11 +42,12 @@ public class DefaultConfigManager implements ConfigManager {
             throw new RuntimeException("pull repeater config failed, remain retry time is " + retryTime);
         }
         try {
-            return JSON.parseObject(resp.getBody(), new TypeReference<RepeaterResult<RepeaterConfig>>() {
-            });
+            String body = resp.getBody();
+            log.info("pullConfig successful: {}", body);
+            return JSON.parseObject(body, new TypeReference<RepeaterResult<RepeaterConfig>>() {});
         } catch (Exception e) {
+            log.error("pullConfig error: {}", e.getMessage(), e);
             return RepeaterResult.builder().success(false).message(e.getMessage()).build();
         }
     }
-
 }

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractInvokePluginAdapter implements InvokePlugin {
 
-    protected final static Logger log = LoggerFactory.getLogger(AbstractInvokePluginAdapter.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected volatile RepeaterConfig configTemporary;
 
@@ -114,7 +114,7 @@ public abstract class AbstractInvokePluginAdapter implements InvokePlugin {
         if (watched.compareAndSet(false, true)) {
             List<EnhanceModel> enhanceModels = getEnhanceModels();
             if (CollectionUtils.isEmpty(enhanceModels)) {
-                throw new PluginLifeCycleException("enhance models is empty, plugin type is " + identity());
+                log.warn("enhance models is empty, plugin type is {}", identity());
             }
             for (EnhanceModel em : enhanceModels) {
                 IBuildingForBehavior behavior = null;
@@ -145,14 +145,14 @@ public abstract class AbstractInvokePluginAdapter implements InvokePlugin {
      *
      * @return enhanceModels
      */
-    abstract protected List<EnhanceModel> getEnhanceModels();
+    protected abstract List<EnhanceModel> getEnhanceModels();
 
     /**
      * 返回调用过程处理器，用于处理入参、返回值等
      *
      * @return invocationProcessor构造结果
      */
-    abstract protected InvocationProcessor getInvocationProcessor();
+    protected abstract InvocationProcessor getInvocationProcessor();
 
     /**
      * 返回事件监听器 - 子类若参数的组装方式不适配，可以重写改方法

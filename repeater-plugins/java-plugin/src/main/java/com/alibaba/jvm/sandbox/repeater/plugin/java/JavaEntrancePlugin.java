@@ -1,7 +1,5 @@
 package com.alibaba.jvm.sandbox.repeater.plugin.java;
 
-import java.util.List;
-
 import com.alibaba.jvm.sandbox.repeater.plugin.api.InvocationProcessor;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.impl.AbstractInvokePluginAdapter;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.EnhanceModel;
@@ -10,10 +8,12 @@ import com.alibaba.jvm.sandbox.repeater.plugin.domain.InvokeType;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
 import com.alibaba.jvm.sandbox.repeater.plugin.exception.PluginLifeCycleException;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.InvokePlugin;
-
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kohsuke.MetaInfServices;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Java入口插件
@@ -28,7 +28,9 @@ public class JavaEntrancePlugin extends AbstractInvokePluginAdapter {
 
     @Override
     protected List<EnhanceModel> getEnhanceModels() {
-        if (config == null || CollectionUtils.isEmpty(config.getJavaEntranceBehaviors())) { return null;}
+        if (config == null || CollectionUtils.isEmpty(config.getJavaEntranceBehaviors())) {
+            return Collections.emptyList();
+        }
         List<EnhanceModel> ems = Lists.newArrayList();
         for (Behavior behavior : config.getJavaEntranceBehaviors()) {
             ems.add(EnhanceModel.convert(behavior));
@@ -68,12 +70,13 @@ public class JavaEntrancePlugin extends AbstractInvokePluginAdapter {
             super.onConfigChange(config);
         } else {
             this.config = config;
-            super.onConfigChange(config);
             List<Behavior> current = config.getJavaEntranceBehaviors();
             List<Behavior> latest = configTemporary.getJavaEntranceBehaviors();
             if (JavaPluginUtils.hasDifference(current, latest)) {
+                log.info("JavaEntrancePlugin onConfigChange,config={},configTemporary={}", config, configTemporary);
                 reWatch0();
             }
+            super.onConfigChange(config);
         }
     }
 }

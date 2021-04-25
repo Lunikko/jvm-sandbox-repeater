@@ -5,8 +5,8 @@ import com.alibaba.jvm.sandbox.api.resource.ConfigInfo;
 import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.HttpUtil;
-import com.alibaba.jvm.sandbox.repeater.plugin.core.util.LogUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.HashMap;
@@ -24,11 +24,12 @@ import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_HEARTBEAT
  *
  * @author zhaoyb1990
  */
+@Slf4j
 public class HeartbeatHandler {
 
     private static final long FREQUENCY = 10;
 
-    private final static String HEARTBEAT_DOMAIN = PropertyUtil.getPropertyOrDefault(REPEAT_HEARTBEAT_URL, "");
+    private static final String HEARTBEAT_DOMAIN = PropertyUtil.getPropertyOrDefault(REPEAT_HEARTBEAT_URL, "");
 
     private static ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("heartbeat-pool-%d").daemon(true).build());
@@ -44,14 +45,11 @@ public class HeartbeatHandler {
 
     public synchronized void start() {
         if (initialize.compareAndSet(false, true)) {
-            executorService.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        innerReport();
-                    } catch (Exception e) {
-                        LogUtil.error("error occurred when report heartbeat", e);
-                    }
+            executorService.scheduleAtFixedRate(() -> {
+                try {
+                    innerReport();
+                } catch (Exception e) {
+                    log.error("error occurred when report heartbeat", e);
                 }
             }, 0, FREQUENCY, TimeUnit.SECONDS);
         }
@@ -64,7 +62,7 @@ public class HeartbeatHandler {
     }
 
     private void innerReport() {
-        Map<String, String> params = new HashMap<String, String>(8);
+        Map<String, String> params = new HashMap<>(8);
         params.put("appName", ApplicationModel.instance().getAppName());
         params.put("ip", ApplicationModel.instance().getHost());
         params.put("environment", ApplicationModel.instance().getEnvironment());

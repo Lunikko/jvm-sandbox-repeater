@@ -1,5 +1,6 @@
 package com.alibaba.jvm.sandbox.repeater.plugin.java;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.jvm.sandbox.repeater.plugin.api.InvocationProcessor;
@@ -29,7 +30,7 @@ public class JavaSubInvokePlugin extends AbstractInvokePluginAdapter {
     @Override
     protected List<EnhanceModel> getEnhanceModels() {
         if (config == null || CollectionUtils.isEmpty(config.getJavaSubInvokeBehaviors())) {
-            return null;
+            return Collections.emptyList();
         }
         List<EnhanceModel> ems = Lists.newArrayList();
         for (Behavior behavior : config.getJavaSubInvokeBehaviors()) {
@@ -69,14 +70,14 @@ public class JavaSubInvokePlugin extends AbstractInvokePluginAdapter {
         if (configTemporary == null) {
             super.onConfigChange(config);
         } else {
+            this.config = config;
             List<Behavior> current = config.getJavaSubInvokeBehaviors();
             List<Behavior> latest = configTemporary.getJavaSubInvokeBehaviors();
-            this.config = config;
-            super.onConfigChange(config);
             if (JavaPluginUtils.hasDifference(current, latest)) {
-                log.error("onConfigChange,config={},configTemporary={}", config, configTemporary);
+                log.info("JavaSubInvokePlugin onConfigChange,config={},configTemporary={}", config, configTemporary);
                 reWatch0();
             }
+            super.onConfigChange(config);
         }
     }
 }

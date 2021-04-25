@@ -2,10 +2,10 @@ package com.alibaba.jvm.sandbox.repeater.module.classloader;
 
 import com.alibaba.jvm.sandbox.repeater.plugin.core.bridge.ClassloaderBridge;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
-import com.alibaba.jvm.sandbox.repeater.plugin.core.util.LogUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.InvokePlugin;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.Repeater;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.List;
  *
  * @author zhaoyb1990
  */
+@Slf4j
 public class PluginClassRouting {
 
     /**
@@ -97,10 +98,10 @@ public class PluginClassRouting {
             for (PluginClassRouting routing : routingList) {
                 PluginClassLoader.Routing r = transformRouting(routing, isPreloading, timeout);
                 if (r != null) {
-                    LogUtil.info("using target class loader to load plugin,class={}", r);
+                    log.info("using target class loader to load plugin, class={}", r);
                     result.add(r);
                 } else {
-                    LogUtil.warn("no valid classloader found in routing,routing={}", routing);
+                    log.warn("no valid classloader found in routing, routing={}", routing);
                 }
             }
         }
@@ -123,7 +124,7 @@ public class PluginClassRouting {
             while (isPreloading && --timeout > 0 && ClassloaderBridge.instance().findClassInstances(routing.targetClass).size() == 0) {
                 try {
                     Thread.sleep(100);
-                    LogUtil.info("{} required {} class router,waiting for class loading", routing.identity, routing.targetClass);
+                    log.info("{} required {} class router,waiting for class loading", routing.identity, routing.targetClass);
                 } catch (InterruptedException e) {
                     // ignore
                 }

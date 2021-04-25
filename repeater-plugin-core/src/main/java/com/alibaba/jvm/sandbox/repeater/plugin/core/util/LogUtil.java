@@ -1,5 +1,6 @@
 package com.alibaba.jvm.sandbox.repeater.plugin.core.util;
 
+import lombok.experimental.UtilityClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +10,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author zhaoyb1990
  */
+@UtilityClass
 public class LogUtil {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(LogUtil.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogUtil.class);
 
     public static void info(String placeholder, Object... params) {
         LOGGER.info(placeholder, params);

@@ -15,7 +15,7 @@ public class RepeaterResult<T> {
     private String message;
 
     public static <T> Builder<T> builder() {
-        return new Builder<T>();
+        return new Builder<>();
     }
 
     public static class Builder<T> {
@@ -39,7 +39,7 @@ public class RepeaterResult<T> {
         }
 
         public <T> RepeaterResult<T> build() {
-            RepeaterResult<T> pr = new RepeaterResult<T>();
+            RepeaterResult<T> pr = new RepeaterResult<>();
             pr.setMessage(this.message);
             pr.setSuccess(this.success);
             pr.setData((T) this.data);
