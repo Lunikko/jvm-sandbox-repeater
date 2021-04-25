@@ -58,12 +58,7 @@ public class ParameterMatchMockStrategy extends AbstractMockStrategy {
             return SelectResult.builder().match(false).cost(stopwatch.stop().elapsed(TimeUnit.MILLISECONDS)).build();
         }
         // 根据index排序
-        Collections.sort(target, new Comparator<Invocation>() {
-            @Override
-            public int compare(Invocation o1, Invocation o2) {
-                return o1.getIndex() - o2.getIndex();
-            }
-        });
+        target.sort((o1, o2) -> o1.getIndex() - o2.getIndex());
         Map<Double,Invocation> invocationMap = Maps.newHashMap();
         // 计算相似度;根据相似度进行排序
         for (Invocation invocation : target) {
@@ -89,15 +84,12 @@ public class ParameterMatchMockStrategy extends AbstractMockStrategy {
             invocationMap.put(similarity, invocation);
         }
         // 如果没有找到，返回相似度最高的一条
-        List<Double> scores = new ArrayList<Double>(invocationMap.keySet());
-        Collections.sort(scores, new Comparator<Double>() {
-            @Override
-            public int compare(Double o1, Double o2) {
-                if (Objects.equal(o1,o2)) {
-                    return 0;
-                }
-                return o2 - o1 > 0 ? 1 : -1;
+        List<Double> scores = new ArrayList<>(invocationMap.keySet());
+        scores.sort((o1, o2) -> {
+            if (Objects.equal(o1, o2)) {
+                return 0;
             }
+            return o2 - o1 > 0 ? 1 : -1;
         });
         Double similarity = scores.get(0);
         Invocation invocation = invocationMap.get(similarity);

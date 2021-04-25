@@ -18,13 +18,13 @@ import com.alibaba.jvm.sandbox.repeater.plugin.spi.MockStrategy.StrategyType;
  */
 class StrategyProvider {
 
-    private final static StrategyProvider INSTANCE = new StrategyProvider();
+    private static final StrategyProvider INSTANCE = new StrategyProvider();
 
     public static StrategyProvider instance() {
         return INSTANCE;
     }
 
-    private final Map<StrategyType, MockStrategy> strategyCached = new ConcurrentHashMap<StrategyType, MockStrategy>(2);
+    private final Map<StrategyType, MockStrategy> strategyCached = new ConcurrentHashMap<>(2);
 
     private StrategyProvider() {
         ServiceLoader<MockStrategy> strategies = ServiceLoader.load(MockStrategy.class, this.getClass().getClassLoader());

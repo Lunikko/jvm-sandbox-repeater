@@ -31,7 +31,7 @@ public class HttpRepeater extends AbstractRepeater {
             throw new RepeatException("type miss match, required HttpInvocation but found " + invocation.getClass().getSimpleName());
         }
         HttpInvocation hi = (HttpInvocation) invocation;
-        Map<String, String> extra = new HashMap<String, String>(2);
+        Map<String, String> extra = new HashMap<>(2);
         // 透传当前生成的traceId到http线程 HttpStandaloneListener#initConetxt
         extra.put(Constants.HEADER_TRACE_ID, context.getTraceId());
         // 直接访问本机,默认全都走http，不关心protocol
