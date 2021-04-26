@@ -19,7 +19,7 @@
     <properties>
         <spring.boot.version>2.2.13.RELEASE</spring.boot.version>
         <jackson.version>2.12.3</jackson.version>
-        <ehcache.version>2.10.6</ehcache.version>
+        <caffeine.version>2.9.0</caffeine.version>
     </properties>
 
     <artifactId>repeater-console</artifactId>
@@ -34,9 +34,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache.version}</version>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
             </dependency>
             <!-- project assist -->
             <dependency>

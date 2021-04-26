@@ -5,13 +5,12 @@ import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterResult;
 import com.alibaba.repeater.console.common.domain.Regress;
 import com.alibaba.repeater.console.service.RegressService;
 import com.google.common.collect.Lists;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,18 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author zhaoyb1990
  */
 @Service("regressService")
+@CacheConfig(cacheNames = "caffeineCacheManager")
 public class RegressServiceImpl implements RegressService {
 
     private AtomicInteger sequence = new AtomicInteger(0);
 
     private String[] partners = new String[]{"韩梅梅", "李莉", "吉姆", "小红", "张三", "李四", "王麻子"};
     private String[] slogans = new String[]{"JAVA", "Python", "PHP", "C#", "C++", "Javascript", "GO"};
-
-    private CacheManager cacheManager;
-
-    {
-        cacheManager = CacheManager.create(RegressServiceImpl.class.getClassLoader().getResourceAsStream("ehcache.xml"));
-    }
 
     @Override
     public RepeaterResult<Regress> getRegress(String name) {
@@ -77,17 +71,10 @@ public class RegressServiceImpl implements RegressService {
     }
 
     @Override
+    @Cacheable(key = "#name")
     public RepeaterResult<Regress> getRegressWithCache(String name) {
-        Cache cache = cacheManager.getCache("regressCache");
-        // priority use of the cache data
-        Element element = cache.get(name);
-        Regress regress;
-        if (element == null) {
-            regress = getRegressInternal(name, 1);
-            cache.put(new Element(name, regress));
-        } else {
-            regress = (Regress) element.getObjectValue();
-        }
+        Regress regress = getRegressInternal(name, 1);
+
         return RepeaterResult.builder()
                 .data(regress)
                 .success(true)

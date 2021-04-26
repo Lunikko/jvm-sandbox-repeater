@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.lang.Exception;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;

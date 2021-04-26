@@ -50,16 +50,19 @@ public class TtlConcurrentAdvice {
     public synchronized void watch(RepeaterConfig config) {
         if (config != null && config.isUseTtl()) {
             new EventWatchBuilder(watcher)
-                    .onClass("java.util.concurrent.ThreadPoolExecutor").includeBootstrap()
-                    .onBehavior("execute")
                     .onClass("java.util.concurrent.AbstractExecutorService").includeBootstrap()
                     .onBehavior("submit")
+                    .onClass("java.util.concurrent.ThreadPoolExecutor").includeBootstrap()
+                    .onBehavior("execute")
                     .onClass("java.util.concurrent.ScheduledThreadPoolExecutor").includeBootstrap()
                     .onBehavior("execute")
                     .onBehavior("submit")
                     .onBehavior("schedule")
                     .onBehavior("scheduleAtFixedRate")
                     .onBehavior("scheduleWithFixedDelay")
+                    .onClass("java.util.concurrent.ForkJoinPool")
+                    .onBehavior("execute")
+                    .onBehavior("submit")
                     .onWatch(new AdviceAdapterListener(new AdviceListener() {
                         @Override
                         protected void before(Advice advice) throws Throwable {
@@ -69,7 +72,7 @@ public class TtlConcurrentAdvice {
                             if (parameterArray == null || parameterArray.length < 1) {
                                 return;
                             }
-                            if (parameterArray[0] instanceof com.alibaba.ttl.TtlEnhanced) {
+                            if (parameterArray[0] instanceof com.alibaba.ttl.spi.TtlEnhanced) {
                                 return;
                             }
                             Class<?> parameter0Type = parameterTypeArray[0];

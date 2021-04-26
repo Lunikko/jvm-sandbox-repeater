@@ -1,7 +1,6 @@
 package com.alibaba.repeater.console.start;
 
 import com.alibaba.repeater.client.SpringContextAware;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
