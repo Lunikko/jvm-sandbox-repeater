@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * {@link JacksonUtil}
@@ -17,6 +17,7 @@ import java.util.List;
  *
  * @author zhaoyb1990
  */
+@Slf4j
 public class JacksonUtil {
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -37,6 +38,7 @@ public class JacksonUtil {
         try {
             return pretty ? mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object) : mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -45,6 +47,7 @@ public class JacksonUtil {
         try {
             return mapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -53,6 +56,7 @@ public class JacksonUtil {
         try {
             return mapper.readValue(bytes, type);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -61,6 +65,7 @@ public class JacksonUtil {
         try {
             return mapper.readValue(sequence, type);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -69,6 +74,7 @@ public class JacksonUtil {
         try {
             return mapper.readValue(bytes, getCollectionType(ArrayList.class, type));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -77,6 +83,7 @@ public class JacksonUtil {
         try {
             return mapper.readValue(sequence, getCollectionType(ArrayList.class, type));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }
@@ -85,6 +92,7 @@ public class JacksonUtil {
         try {
             return mapper.readTree(bytes);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new SerializeException("jackson-serialize-error", e);
         }
     }

@@ -140,7 +140,7 @@ public class ReplayServiceImpl implements ReplayService {
             log.error("error occurred serialize diff result", e);
             return RepeaterResult.builder().message("operate failed").build();
         }
-        Replay calllback = replayDao.saveAndFlush(replay);
+        replayDao.saveAndFlush(replay);
         return RepeaterResult.builder().success(true).message("operate success").data("-/-").build();
     }
 
