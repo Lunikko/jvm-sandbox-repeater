@@ -2,6 +2,7 @@ package com.alibaba.jvm.sandbox.repeater.plugin.core.impl.standalone;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.repeater.plugin.api.ConfigManager;
+import com.alibaba.jvm.sandbox.repeater.plugin.core.impl.api.DefaultConfigManager;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PathUtils;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterResult;
@@ -18,10 +19,9 @@ import java.nio.charset.StandardCharsets;
  *
  * @author zhaoyb1990
  */
-
 public class StandaloneConfigManager implements ConfigManager {
 
-    private final static Logger log = LoggerFactory.getLogger(StandaloneConfigManager.class);
+    private static final Logger log = LoggerFactory.getLogger(StandaloneConfigManager.class);
 
     @Override
     public RepeaterResult<RepeaterConfig> pullConfig() {

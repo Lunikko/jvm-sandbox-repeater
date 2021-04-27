@@ -29,7 +29,6 @@ public class SerializerWrapper {
     }
 
     /**
-     * 反序列化recordWrapper；传输对象默认采用JSON序列化
      *
      * @param sequence 序列化字符串
      * @param tClass   对象类型
@@ -67,6 +66,17 @@ public class SerializerWrapper {
      * hessian反序列化
      *
      * @param sequence 序列化字符串
+     * @return 反序列化后的对象
+     * @throws SerializeException 序列化异常
+     */
+    public static Object hessianDeserialize(String sequence) throws SerializeException {
+        return provider.provide(Type.HESSIAN).deserialize(sequence);
+    }
+
+    /**
+     * hessian反序列化
+     *
+     * @param sequence 序列化字符串
      * @param tClass   对象类型
      * @param <T>      泛型对象
      * @return 反序列化后的对象
@@ -77,14 +87,38 @@ public class SerializerWrapper {
     }
 
     /**
+     * hessian序列化
+     *
+     * @param object 对象
+     * @return 序列化数组
+     * @throws SerializeException 序列化异常
+     */
+    public static byte[] hessianSerializeBytes(Object object) throws SerializeException {
+        return provider.provide(Type.HESSIAN).serialize(object);
+    }
+
+    /**
      * hessian反序列化
      *
-     * @param sequence 序列化字符串
+     * @param bytes 序列化数组
      * @return 反序列化后的对象
      * @throws SerializeException 序列化异常
      */
-    public static Object hessianDeserialize(String sequence) throws SerializeException {
-        return provider.provide(Type.HESSIAN).deserialize(sequence);
+    public static Object hessianDeserialize(byte[] bytes) throws SerializeException {
+        return provider.provide(Type.HESSIAN).deserialize(bytes);
+    }
+
+    /**
+     * hessian反序列化
+     *
+     * @param bytes 序列化字符串
+     * @param tClass   对象类型
+     * @param <T>      泛型对象
+     * @return 反序列化后的对象
+     * @throws SerializeException 序列化异常
+     */
+    public static <T> T hessianDeserialize(byte[] bytes, Class<T> tClass) throws SerializeException {
+        return provider.provide(Type.HESSIAN).deserialize(bytes, tClass);
     }
 
     /**

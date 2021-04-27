@@ -17,10 +17,12 @@
         <ttl.version>2.12.1</ttl.version>
         <guava.version>30.1.1-jre</guava.version>
         <fastjson.version>1.2.76</fastjson.version>
+        <jackson.version>2.12.3</jackson.version>
         <commons-io.version>2.8.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <okhttp.version>4.9.1</okhttp.version>
+        <kafka.version>2.3.1</kafka.version>
         <testng.version>6.14.3</testng.version>
         <commons-csv.version>1.8</commons-csv.version>
         <lombok.version>1.18.20</lombok.version>
@@ -116,6 +118,36 @@
                 <version>${fastjson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
@@ -139,6 +171,11 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

@@ -6,8 +6,9 @@ import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.HttpUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +25,9 @@ import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_HEARTBEAT
  *
  * @author zhaoyb1990
  */
-@Slf4j
 public class HeartbeatHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(HeartbeatHandler.class);
 
     private static final long FREQUENCY = 10;
 

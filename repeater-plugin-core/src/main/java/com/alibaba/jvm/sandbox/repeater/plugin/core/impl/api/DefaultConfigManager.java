@@ -9,7 +9,8 @@ import com.alibaba.jvm.sandbox.repeater.plugin.core.util.HttpUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterResult;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link DefaultConfigManager} http数据拉取
@@ -17,8 +18,9 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zhaoyb1990
  */
-@Slf4j
 public class DefaultConfigManager implements ConfigManager {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultConfigManager.class);
 
     private static final String DEFAULT_CONFIG_URL = PropertyUtil.getPropertyOrDefault(Constants.DEFAULT_CONFIG_DATASOURCE, "");
 

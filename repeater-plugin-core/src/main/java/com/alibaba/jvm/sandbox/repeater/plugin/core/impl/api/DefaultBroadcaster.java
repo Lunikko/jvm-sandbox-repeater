@@ -49,8 +49,8 @@ public class DefaultBroadcaster extends AbstractBroadcaster {
         this.broadcastRepeatUrl = broadcastRepeatUrl;
     }
 
-    public String getPullRecordUrl() {
-        return pullRecordUrl;
+    public void setPullRecordUrl(String pullRecordUrl) {
+        this.pullRecordUrl = pullRecordUrl;
     }
 
     public DefaultBroadcaster() {
@@ -93,9 +93,9 @@ public class DefaultBroadcaster extends AbstractBroadcaster {
         headers.put("content-type", "application/json");
         Resp resp = HttpUtil.invokePostBody(url, headers, body);
         if (resp.isSuccess()) {
-            log.info("broadcast success,traceId={},resp={}", traceId, resp);
+            log.info("broadcast success, traceId={}, resp={}", traceId, resp);
         } else {
-            log.info("broadcast failed ,traceId={},resp={}", traceId, resp);
+            log.info("broadcast failed, traceId={}, resp={}", traceId, resp);
         }
     }
 

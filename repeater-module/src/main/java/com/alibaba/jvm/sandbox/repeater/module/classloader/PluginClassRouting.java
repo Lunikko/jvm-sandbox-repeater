@@ -5,8 +5,9 @@ import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.InvokePlugin;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.Repeater;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ import java.util.List;
  *
  * @author zhaoyb1990
  */
-@Slf4j
 public class PluginClassRouting {
+
+    private static final Logger log = LoggerFactory.getLogger(PluginClassRouting.class);
 
     /**
      * 目标类

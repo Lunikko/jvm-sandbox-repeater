@@ -34,9 +34,24 @@ public class Constants {
     public static final String DEFAULT_RECORD_BROADCASTER = "broadcaster.record.url";
 
     /**
+     * 默认回放消息投递Topic
+     */
+    public static final String DEFAULT_REPEAT_TOPIC = "broadcaster.repeat.topic";
+
+    /**
+     * 默认录制消息投递Topic
+     */
+    public static final String DEFAULT_RECORD_TOPIC = "broadcaster.record.topic";
+
+    /**
      * 是否开启单机工作模式
      */
     public static final String REPEAT_STANDALONE_MODE = "repeat.standalone.mode";
+
+    /**
+     * 是否启用Kafka方式上报
+     */
+    public static final String REPEAT_USE_KAFKA = "repeat.use.kafka";
 
     /**
      * 是否开启spring advice的拦截

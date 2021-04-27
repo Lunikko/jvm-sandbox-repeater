@@ -1,9 +1,12 @@
 package com.alibaba.jvm.sandbox.repeater.plugin.core.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -14,6 +17,26 @@ import java.util.Properties;
  * @author zhaoyb1990
  */
 public class PropertyUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(PropertyUtil.class);
+
+    private static Properties properties = new Properties();
+
+    private PropertyUtil() {
+    }
+
+    static {
+        try {
+            InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/repeater.properties"));
+            properties.load(is);
+        } catch (Exception e) {
+            log.info(e.getMessage(), e);
+            // cause this class will be load in repeater console, use this hard code mode to solve compatibility problem.
+            if (PropertyUtil.class.getClassLoader().getClass().getCanonicalName().contains("sandbox")) {
+                throw new RuntimeException("load repeater-core.properties failed", e);
+            }
+        }
+    }
 
     /**
      * 获取系统属性带默认值
@@ -27,20 +50,6 @@ public class PropertyUtil {
         return StringUtils.isEmpty(property) ? defaultValue : property;
     }
 
-    private static Properties properties = new Properties();
-
-    static {
-        try {
-            InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/repeater.properties"));
-            properties.load(is);
-        } catch (Exception e) {
-            // cause this class will be load in repeater console, use this hard code mode to solve compatibility problem.
-            if (PropertyUtil.class.getClassLoader().getClass().getCanonicalName().contains("sandbox")) {
-                throw new RuntimeException("load repeater-core.properties failed", e);
-            }
-        }
-    }
-
     /**
      * 获取repeater-core.properties的配置信息
      *
@@ -51,5 +60,27 @@ public class PropertyUtil {
     public static String getPropertyOrDefault(String key, String defaultValue) {
         String property = properties.getProperty(key);
         return StringUtils.isEmpty(property) ? defaultValue : property;
+    }
+
+    public static Properties getProducerProperties() {
+        Properties props = new Properties();
+        try (InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/producer.properties"))){
+            props.load(is);
+        } catch (IOException e) {
+            log.info(e.getMessage(), e);
+        }
+
+        return props;
+    }
+
+    public static Properties getConsumerProperties() {
+        Properties props = new Properties();
+        try (InputStream is = PropertyUtil.class.getClassLoader().getResourceAsStream("consumer.properties")) {
+            props.load(is);
+        } catch (IOException e) {
+            log.info(e.getMessage(), e);
+        }
+
+        return props;
     }
 }

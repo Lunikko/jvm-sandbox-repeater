@@ -24,9 +24,9 @@ public interface Broadcaster {
     /**
      * 发送回放消息广播
      *
-     * @param record 回放记录
+     * @param repeatModel 回放记录
      */
-    void sendRepeat(RepeatModel record);
+    void sendRepeat(RepeatModel repeatModel);
 
 
     /**
