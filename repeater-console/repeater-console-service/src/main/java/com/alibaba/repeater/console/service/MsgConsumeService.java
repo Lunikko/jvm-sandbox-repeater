@@ -1,6 +1,6 @@
 package com.alibaba.repeater.console.service;
 
-public interface KafkaConsumeService {
+public interface MsgConsumeService {
 
     void consumerRecord();
 

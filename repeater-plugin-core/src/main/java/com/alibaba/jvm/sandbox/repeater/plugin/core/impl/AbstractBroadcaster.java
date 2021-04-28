@@ -6,14 +6,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.alibaba.jvm.sandbox.repeater.plugin.api.Broadcaster;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.ExecutorInner;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RecordModel;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeatModel;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link AbstractBroadcaster} 抽象的消息转发实现
@@ -23,9 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author zhaoyb1990
  */
-public abstract class AbstractBroadcaster implements Broadcaster {
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+public abstract class AbstractBroadcaster extends BaseBroadcaster {
 
     private final ConcurrentLinkedQueue<RecordModel> queue = new ConcurrentLinkedQueue<>();
 

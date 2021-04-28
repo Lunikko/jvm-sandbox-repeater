@@ -1,6 +1,6 @@
 package com.alibaba.repeater.console.service.impl;
 
-import com.alibaba.repeater.console.service.KafkaConsumeService;
+import com.alibaba.repeater.console.service.MsgConsumeService;
 import com.alibaba.repeater.console.service.RecordService;
 import com.alibaba.repeater.console.service.ReplayService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.concurrent.*;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = "repeat.use.kafka", havingValue = "true")
-public class KafkaConsumeServiceImpl implements KafkaConsumeService {
+public class KafkaConsumeServiceImpl implements MsgConsumeService {
 
     @Resource
     private RecordService recordService;

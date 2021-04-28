@@ -15,14 +15,15 @@
         <org.slf4j.version>1.7.30</org.slf4j.version>
         <logback.version>1.2.3</logback.version>
         <ttl.version>2.12.1</ttl.version>
-        <guava.version>30.1.1-jre</guava.version>
+        <guava.version>21.0</guava.version>
         <fastjson.version>1.2.76</fastjson.version>
         <jackson.version>2.12.3</jackson.version>
         <commons-io.version>2.8.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <okhttp.version>4.9.1</okhttp.version>
+        <okhttp.version>3.14.9</okhttp.version>
         <kafka.version>2.3.1</kafka.version>
+        <jnats.version>2.10.0</jnats.version>
         <testng.version>6.14.3</testng.version>
         <commons-csv.version>1.8</commons-csv.version>
         <lombok.version>1.18.20</lombok.version>
@@ -176,6 +177,11 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.nats</groupId>
+                <artifactId>jnats</artifactId>
+                <version>${jnats.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

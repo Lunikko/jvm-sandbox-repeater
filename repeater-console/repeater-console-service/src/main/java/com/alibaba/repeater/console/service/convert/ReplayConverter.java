@@ -34,20 +34,22 @@ public class ReplayConverter implements ModelConverter<Replay, ReplayBO> {
     public ReplayBO convert(Replay source) {
         ReplayBO rbo = new ReplayBO();
         BeanUtils.copyProperties(source, rbo);
-        try {
-            List<MockInvocation> mockInvocations = JacksonUtil.deserializeArray(source.getMockInvocation(), MockInvocation.class);
-            rbo.setMockInvocations(
-                    Optional.ofNullable(mockInvocations)
-                            .orElse(Collections.emptyList())
-                            .stream().map(mockInvocationConvert::convert)
-                            .collect(Collectors.toList())
-            );
-            rbo.setDifferences(JacksonUtil.deserializeArray(source.getDiffResult(), DifferenceBO.class));
-        } catch (SerializeException e) {
-            //
+        if (!source.getStatus().equals(ReplayStatus.PROCESSING.getStatus())) {
+            try {
+                List<MockInvocation> mockInvocations = JacksonUtil.deserializeArray(source.getMockInvocation(), MockInvocation.class);
+                rbo.setMockInvocations(
+                        Optional.ofNullable(mockInvocations)
+                                .orElse(Collections.emptyList())
+                                .stream().map(mockInvocationConvert::convert)
+                                .collect(Collectors.toList())
+                );
+                rbo.setDifferences(JacksonUtil.deserializeArray(source.getDiffResult(), DifferenceBO.class));
+            } catch (SerializeException ignored) {
+            }
         }
         rbo.setStatus(ReplayStatus.of(source.getStatus()));
         rbo.setRecord(recordDetailConverter.convert(source.getRecord()));
+
         return rbo;
     }
 

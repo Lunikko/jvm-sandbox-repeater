@@ -54,6 +54,18 @@ public class Constants {
     public static final String REPEAT_USE_KAFKA = "repeat.use.kafka";
 
     /**
+     * 是否启用Nats方式上报
+     */
+    public static final String REPEAT_USE_NATS = "repeat.use.nats";
+
+    /**
+     * Nats集群地址
+     */
+    public static final String REPEAT_NATS_URL = "repeat.nats.url";
+
+    public static final String MSG_SEPARATOR = "@@";
+
+    /**
      * 是否开启spring advice的拦截
      */
     public static final String REPEAT_SPRING_ADVICE_SWITCH = "repeat.spring.advice.switch";
