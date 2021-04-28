@@ -17,8 +17,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_HEARTBEAT_URL;
-
 /**
  * {@link HeartbeatHandler}
  * <p>
@@ -29,9 +27,9 @@ public class HeartbeatHandler {
 
     private static final Logger log = LoggerFactory.getLogger(HeartbeatHandler.class);
 
-    private static final long FREQUENCY = 10;
+    private static final long FREQUENCY = 30;
 
-    private static final String HEARTBEAT_DOMAIN = PropertyUtil.getPropertyOrDefault(REPEAT_HEARTBEAT_URL, "");
+    private static final String HEARTBEAT_DOMAIN = PropertyUtil.getPropertyOrDefault(com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_HEARTBEAT_URL, "");
 
     private static ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("heartbeat-pool-%d").daemon(true).build());
@@ -73,8 +71,9 @@ public class HeartbeatHandler {
         try {
             params.put("status", moduleManager.isActivated(Constants.MODULE_ID) ? "ACTIVE" : "FROZEN");
         } catch (ModuleException e) {
-            // ignore
+            params.put("status", "UNKNOWN");
         }
-        HttpUtil.doGet(HEARTBEAT_DOMAIN, params);
+
+        HttpUtil.asyncReport(HEARTBEAT_DOMAIN, params);
     }
 }

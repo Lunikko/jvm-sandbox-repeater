@@ -50,8 +50,6 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_SPRING_ADVICE_SWITCH;
-
 /**
  * <p>
  *
@@ -99,7 +97,7 @@ public class RepeaterModule implements Module, ModuleLifecycle {
         Mode mode = configInfo.getMode();
         log.info("module is loading, id={},version={}, mode={}", com.alibaba.jvm.sandbox.repeater.module.Constants.MODULE_ID, com.alibaba.jvm.sandbox.repeater.module.Constants.VERSION, mode);
         /* agent方式启动 */
-        if (mode == Mode.AGENT && Boolean.parseBoolean(PropertyUtil.getPropertyOrDefault(REPEAT_SPRING_ADVICE_SWITCH, ""))) {
+        if (mode == Mode.AGENT && Boolean.parseBoolean(PropertyUtil.getPropertyOrDefault(Constants.REPEAT_SPRING_ADVICE_SWITCH, ""))) {
             log.info("agent launch mode, use Spring Instantiate Advice to register bean.");
             SpringContextInnerContainer.setAgentLaunch(true);
             SpringInstantiateAdvice.watcher(this.eventWatcher).watch();

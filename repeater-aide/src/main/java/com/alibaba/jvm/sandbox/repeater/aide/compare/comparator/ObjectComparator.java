@@ -6,10 +6,8 @@ import com.alibaba.jvm.sandbox.repeater.aide.compare.path.Path;
 import org.kohsuke.MetaInfServices;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
-
-import static java.lang.reflect.Modifier.isStatic;
-import static java.lang.reflect.Modifier.isTransient;
 
 /**
  * {@link ObjectComparator}
@@ -61,7 +59,7 @@ public class ObjectComparator implements Comparator {
     private void innerCompare(Class<?> clazz, Object left, Object right, List<Path> paths, IntegratedComparator comparator) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            if (field.isSynthetic() || isTransient(field.getModifiers()) || isStatic(field.getModifiers())) {
+            if (field.isSynthetic() || Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
             boolean accessible = field.isAccessible();

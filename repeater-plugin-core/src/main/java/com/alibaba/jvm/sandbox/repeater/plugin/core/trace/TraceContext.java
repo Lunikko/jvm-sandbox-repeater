@@ -6,10 +6,6 @@ import java.util.Map;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
 import com.alibaba.jvm.sandbox.repeater.plugin.domain.InvokeType;
 
-import static com.alibaba.jvm.sandbox.repeater.plugin.core.trace.TraceGenerator.getSampleBit;
-import static com.alibaba.jvm.sandbox.repeater.plugin.core.trace.TraceGenerator.isValid;
-import static java.lang.Long.parseLong;
-
 /**
  * {@link TraceContext} 定义一个简单的上下文，用于串联一次完成调用
  *
@@ -89,7 +85,7 @@ public class TraceContext {
     public boolean inTimeSample(InvokeType invokeType) {
         // 第一级入口流量才会计算采样；非自身入口类型直接抛弃
         if (this.invokeType == null || this.invokeType.equals(invokeType)) {
-            boolean sampled = isValid(traceId) && parseLong(getSampleBit(traceId)) % 10000 < ApplicationModel.instance().getSampleRate();
+            boolean sampled = TraceGenerator.isValid(traceId) && Long.parseLong(TraceGenerator.getSampleBit(traceId)) % 10000 < ApplicationModel.instance().getSampleRate();
             this.invokeType = invokeType;
             this.sampled = sampled;
             return sampled;

@@ -15,11 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.ByteBuffer;
 
 /**
  * @author luguanghua
@@ -63,10 +61,8 @@ public class KafkaBroadcaster implements Broadcaster {
 
     private void broadcast(Object model, String traceId, String topic, Long timestamp) {
         try {
-            final byte[] key = ByteBuffer.allocate(4).putInt(traceId.hashCode()).array();
-            final ProducerRecord<byte[], byte[]> producerRecord = new ProducerRecord<>(topic, null, timestamp, key, SerializerWrapper.hessianSerializeBytes(model));
-
-            final Producer<byte[], byte[]> producer = lazyProducer.get();
+            final ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, null, timestamp, traceId, SerializerWrapper.hessianSerialize(model));
+            final Producer<String, String> producer = lazyProducer.get();
             producer.send(producerRecord, ((metadata, exception) -> {
                 if (exception != null) {
                     log.error("broadcast failed, traceId={}, msg={}, resp={}", traceId, exception.getMessage(), metadata);
@@ -118,10 +114,10 @@ public class KafkaBroadcaster implements Broadcaster {
     }
 
     private class LazyProducer {
-        private volatile Producer<byte[], byte[]> producer;
+        private volatile Producer<String, String> producer;
 
-        public Producer<byte[], byte[]> get() {
-            Producer<byte[], byte[]> result = this.producer;
+        public Producer<String, String> get() {
+            Producer<String, String> result = this.producer;
             if (result == null) {
                 synchronized (this) {
                     result = this.producer;
@@ -134,8 +130,8 @@ public class KafkaBroadcaster implements Broadcaster {
             return result;
         }
 
-        private Producer<byte[], byte[]> initialize() {
-            Producer<byte[], byte[]> tmp = null;
+        private Producer<String, String> initialize() {
+            Producer<String, String> tmp = null;
             try {
                 tmp = createProducer();
             } catch (Exception e) {
@@ -145,8 +141,8 @@ public class KafkaBroadcaster implements Broadcaster {
             return tmp;
         }
 
-        private Producer<byte[], byte[]> createProducer() {
-            return new KafkaProducer<>(PropertyUtil.getProducerProperties(), new ByteArraySerializer(), new ByteArraySerializer());
+        private Producer<String, String> createProducer() {
+            return new KafkaProducer<>(PropertyUtil.getProducerProperties(), new StringSerializer(), new StringSerializer());
         }
 
         public boolean isInitialized() {

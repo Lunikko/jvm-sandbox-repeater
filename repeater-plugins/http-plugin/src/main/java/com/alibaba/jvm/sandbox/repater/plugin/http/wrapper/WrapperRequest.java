@@ -1,6 +1,7 @@
 package com.alibaba.jvm.sandbox.repater.plugin.http.wrapper;
 
 import com.alibaba.jvm.sandbox.repater.plugin.http.HttpStandaloneListener;
+import com.alibaba.jvm.sandbox.repeater.plugin.Constants;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.alibaba.jvm.sandbox.repeater.plugin.Constants.REPEAT_RECORD_HTTP_INTERCEPT_BODY_CONTENT_TYPES;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ public class WrapperRequest extends HttpServletRequestWrapper {
 //        this.usingBody = StringUtils.contains(request.getContentType(), "application/json");
         // 需要拦截body
         boolean _usingBody = false;
-        List<String> interceptBodyContentTypes = Arrays.asList(REPEAT_RECORD_HTTP_INTERCEPT_BODY_CONTENT_TYPES);
+        List<String> interceptBodyContentTypes = Arrays.asList(Constants.REPEAT_RECORD_HTTP_INTERCEPT_BODY_CONTENT_TYPES);
         for (int i = 0; i < interceptBodyContentTypes.size() && !_usingBody; i++) {
             String interceptBodyContentType = interceptBodyContentTypes.get(i);
             _usingBody = StringUtils.contains(request.getContentType(), interceptBodyContentType);

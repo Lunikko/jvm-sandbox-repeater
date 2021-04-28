@@ -1,14 +1,13 @@
 package com.alibaba.jvm.sandbox.repeater.aide.compare.comparator;
 
 import com.alibaba.jvm.sandbox.repeater.aide.compare.IntegratedComparator;
+import com.alibaba.jvm.sandbox.repeater.aide.compare.TypeUtils;
 import com.alibaba.jvm.sandbox.repeater.aide.compare.path.Path;
 import org.kohsuke.MetaInfServices;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static com.alibaba.jvm.sandbox.repeater.aide.compare.TypeUtils.isCollection;
 
 /**
  * {@link CollectionComparator}
@@ -31,7 +30,7 @@ public class CollectionComparator implements Comparator {
         }
         Class<?> lCs = left.getClass();
         Class<?> rCs = right.getClass();
-        return isCollection(lCs, rCs);
+        return TypeUtils.isCollection(lCs, rCs);
     }
 
     @Override

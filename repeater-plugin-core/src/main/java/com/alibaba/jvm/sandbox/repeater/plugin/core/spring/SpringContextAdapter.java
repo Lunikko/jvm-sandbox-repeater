@@ -2,11 +2,9 @@ package com.alibaba.jvm.sandbox.repeater.plugin.core.spring;
 
 import com.alibaba.jvm.sandbox.repeater.plugin.core.bridge.ClassloaderBridge;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.model.ApplicationModel;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static org.apache.commons.lang3.reflect.MethodUtils.invokeStaticMethod;
 
 /**
  * {@link SpringContextAdapter} SpringBean获取适配
@@ -58,7 +56,7 @@ public class SpringContextAdapter {
             return null;
         }
         try {
-            return invokeStaticMethod(classInstance, "getBeanByName", beanName);
+            return MethodUtils.invokeStaticMethod(classInstance, "getBeanByName", beanName);
         } catch (Exception e) {
             log.error("[InvokeError]-reflection invoke error", e);
             ApplicationModel.instance().exceptionOverflow(e);
@@ -79,7 +77,7 @@ public class SpringContextAdapter {
             return null;
         }
         try {
-            return invokeStaticMethod(classInstance, "getBeanByType", className);
+            return MethodUtils.invokeStaticMethod(classInstance, "getBeanByType", className);
         } catch (Exception e) {
             log.error("[InvokeError]-reflection invoke error", e);
             ApplicationModel.instance().exceptionOverflow(e);

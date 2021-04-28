@@ -1,13 +1,15 @@
 package com.alibaba.jvm.sandbox.repeater.plugin.core.model;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
 import com.alibaba.jvm.sandbox.repeater.plugin.core.util.ExceptionAware;
+import com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil;
+import com.alibaba.jvm.sandbox.repeater.plugin.domain.RepeaterConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
-import static com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil.getSystemPropertyOrDefault;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 /**
  * {@link ApplicationModel} 描述一个基础应用模型
@@ -21,6 +23,8 @@ import static com.alibaba.jvm.sandbox.repeater.plugin.core.util.PropertyUtil.get
  * @author zhaoyb1990
  */
 public class ApplicationModel {
+
+    private Logger log = LoggerFactory.getLogger(ApplicationModel.class);
 
     private String appName;
 
@@ -38,14 +42,33 @@ public class ApplicationModel {
 
     private ApplicationModel() {
         // for example, you can define it your self
-        this.appName = getSystemPropertyOrDefault("app.name", "unknown");
-        this.environment = getSystemPropertyOrDefault("app.env", "unknown");
+        this.appName = PropertyUtil.getSystemPropertyOrDefault("app.name", "unknown");
+        this.environment = PropertyUtil.getSystemPropertyOrDefault("app.env", "unknown");
+        this.host = getLocalIp();
+    }
+
+    private String getLocalIp() {
         try {
-            this.host = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            // default value for disaster
-            this.host = "127.0.0.1";
+            Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (allNetInterfaces.hasMoreElements()) {
+                NetworkInterface netInterface = allNetInterfaces.nextElement();
+                if (netInterface.isLoopback() || !netInterface.isUp() || netInterface.getName().startsWith("docker")) {
+                    continue;
+                }
+                Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress ip = addresses.nextElement();
+                    if (ip instanceof Inet4Address && !ip.isLoopbackAddress() && !ip.getHostAddress().contains(":")) {
+                        log.info("Local IP = {}", ip.getHostAddress());
+                        return ip.getHostAddress();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Can't get local ip, error={}", e.getMessage());
         }
+
+        return "127.0.0.1";
     }
 
     public static ApplicationModel instance() {
@@ -82,7 +105,7 @@ public class ApplicationModel {
         }
     }
 
-    public Integer getSampleRate(){
+    public Integer getSampleRate() {
         return config == null ? 0 : config.getSampleRate();
     }
 

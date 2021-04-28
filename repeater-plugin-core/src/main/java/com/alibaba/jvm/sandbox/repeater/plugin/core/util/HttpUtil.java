@@ -3,6 +3,8 @@ package com.alibaba.jvm.sandbox.repeater.plugin.core.util;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpUtil {
 
+    private static final Logger log = LoggerFactory.getLogger(HttpUtil.class);
+
     private static final String QUESTION_SEPARATE = "?";
 
     private static final String PARAM_SEPARATE = "&";
@@ -26,9 +30,43 @@ public class HttpUtil {
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .connectTimeout(3, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
             .build();
+
+    /**
+     * 异步上报心跳专用接口
+     * @param url
+     * @param params
+     */
+    public static void asyncReport(String url, Map<String, String> params) {
+        StringBuilder builder = new StringBuilder(url);
+        if (!StringUtils.contains(url, QUESTION_SEPARATE)) {
+            builder.append(QUESTION_SEPARATE).append("_r=1");
+        }
+        if (MapUtils.isNotEmpty(params)) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.append(PARAM_SEPARATE)
+                        .append(entry.getKey())
+                        .append(KV_SEPARATE)
+                        .append(entry.getValue());
+            }
+        }
+
+        Request request = new Request.Builder().get().url(builder.toString()).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                log.error("asyncReport failed: {}", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                log.info("asyncReport succeeded, response code: {}", response.code());
+            }
+        });
+    }
 
     /**
      * 执行GET请求，返回body的string

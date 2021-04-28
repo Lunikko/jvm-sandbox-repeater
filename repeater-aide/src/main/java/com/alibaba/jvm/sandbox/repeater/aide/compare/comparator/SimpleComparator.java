@@ -2,12 +2,11 @@ package com.alibaba.jvm.sandbox.repeater.aide.compare.comparator;
 
 import com.alibaba.jvm.sandbox.repeater.aide.compare.IntegratedComparator;
 import com.alibaba.jvm.sandbox.repeater.aide.compare.Difference;
+import com.alibaba.jvm.sandbox.repeater.aide.compare.TypeUtils;
 import com.alibaba.jvm.sandbox.repeater.aide.compare.path.Path;
 import org.kohsuke.MetaInfServices;
 
 import java.util.List;
-
-import static com.alibaba.jvm.sandbox.repeater.aide.compare.TypeUtils.*;
 
 /**
  * {@link SimpleComparator}
@@ -38,12 +37,12 @@ public class SimpleComparator implements Comparator {
         if (lCs != rCs) {
             return true;
         }
-        if (isArray(lCs, rCs) || isCollection(lCs, rCs) || isMap(lCs, rCs)) {
+        if (TypeUtils.isArray(lCs, rCs) || TypeUtils.isCollection(lCs, rCs) || TypeUtils.isMap(lCs, rCs)) {
             return false;
         }
         // basic type or java.lang or java.math or java.time or java.util
-        return isBasicType(lCs, rCs) || isBothJavaLang(lCs, rCs)
-                || isBothJavaMath(lCs, rCs) || isBothJavaTime(lCs, rCs) || isBothJavaUtil(lCs, rCs);
+        return TypeUtils.isBasicType(lCs, rCs) || TypeUtils.isBothJavaLang(lCs, rCs)
+                || TypeUtils.isBothJavaMath(lCs, rCs) || TypeUtils.isBothJavaTime(lCs, rCs) || TypeUtils.isBothJavaUtil(lCs, rCs);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class SimpleComparator implements Comparator {
             return;
         }
         // basic type using == to compare
-        if (isBasicType(lCs, rCs)) {
+        if (TypeUtils.isBasicType(lCs, rCs)) {
             comparator.addDifference(left, right, Difference.Type.FILED_DIFF, paths);
             return;
         }

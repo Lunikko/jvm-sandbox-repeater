@@ -27,14 +27,17 @@ public class PropertyUtil {
 
     static {
         try {
-            InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/repeater.properties"));
-            properties.load(is);
-        } catch (Exception e) {
-            log.info(e.getMessage(), e);
-            // cause this class will be load in repeater console, use this hard code mode to solve compatibility problem.
-            if (PropertyUtil.class.getClassLoader().getClass().getCanonicalName().contains("sandbox")) {
-                throw new RuntimeException("load repeater-core.properties failed", e);
+            File file = new File(PathUtils.getConfigPath() + "/repeater.properties");
+            if (file.exists() && file.canRead()) {
+                InputStream is = new FileInputStream(file);
+                properties.load(is);
+            } else {
+                if (PropertyUtil.class.getClassLoader().getClass().getCanonicalName().contains("sandbox")) {
+                    throw new RuntimeException("load repeater-core.properties failed");
+                }
             }
+        } catch (IOException e) {
+            log.info(e.getMessage(), e);
         }
     }
 
@@ -64,18 +67,7 @@ public class PropertyUtil {
 
     public static Properties getProducerProperties() {
         Properties props = new Properties();
-        try (InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/producer.properties"))){
-            props.load(is);
-        } catch (IOException e) {
-            log.info(e.getMessage(), e);
-        }
-
-        return props;
-    }
-
-    public static Properties getConsumerProperties() {
-        Properties props = new Properties();
-        try (InputStream is = PropertyUtil.class.getClassLoader().getResourceAsStream("consumer.properties")) {
+        try (InputStream is = new FileInputStream(new File(PathUtils.getConfigPath() + "/producer.properties"))) {
             props.load(is);
         } catch (IOException e) {
             log.info(e.getMessage(), e);
